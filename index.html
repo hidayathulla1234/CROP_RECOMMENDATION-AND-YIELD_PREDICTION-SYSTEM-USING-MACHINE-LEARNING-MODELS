@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AI-powered crop recommendation system for smart farming decisions in Odisha." />
+  <title>🌾 Smart Crop Recommendation System</title>
+  <link rel="stylesheet" href="style.css?v=11" />
+</head>
+<body>
+
+  <!-- ── NAVBAR ── -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-icon">🌾</div>
+        <div class="logo-text">
+          <h1 class="logo-title">Smart Crop Recommendation</h1>
+          <p class="logo-sub">AI-powered insights for Odisha farmers</p>
+        </div>
+      </div>
+      <div class="header-controls">
+        <div class="nav-pill">🤖 AI Powered</div>
+        <button id="themeToggle" class="theme-btn" title="Toggle Dark Mode">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── MAIN LAYOUT ── -->
+  <main class="main-layout">
+
+    <!-- ══ INPUT PANEL (left) ══ -->
+    <section class="glass-panel panel input-panel">
+      <div class="panel-header">
+        <h2 class="panel-title">Farm Parameters</h2>
+        <p class="panel-sub">Enter your field conditions to get an AI crop recommendation.</p>
+      </div>
+
+      <form id="predictForm" novalidate>
+
+        <!-- 📍 Location -->
+        <fieldset class="field-group" style="position:relative;z-index:50;">
+          <legend class="group-legend">📍 Location</legend>
+          <div class="field-row">
+            <!-- Custom district dropdown -->
+            <div class="field-item static-label" id="district-container">
+              <label>District</label>
+              <input type="hidden" id="district" name="District" value="Angul" />
+              <div class="custom-dropdown" id="districtDropdown">
+                <div class="dropdown-trigger" id="districtTrigger">
+                  <span class="trigger-icon">📍</span>
+                  <span class="trigger-text" id="districtDisplay">Angul</span>
+                  <span class="trigger-arrow">▼</span>
+                </div>
+                <div class="dropdown-panel" id="districtPanel">
+                  <div class="dropdown-search">
+                    <input type="text" id="districtSearch" placeholder="🔍 Type to search district..." autocomplete="off" />
+                  </div>
+                  <ul class="dropdown-options" id="districtList"></ul>
+                  <div class="dropdown-no-results hidden" id="districtNoResults">No results found</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="field-item">
+              <input id="state" name="State" type="text" value="Odisha" placeholder="e.g. Odisha" />
+              <label for="state">State</label>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- 🌱 Farming Setup -->
+        <fieldset class="field-group">
+          <legend class="group-legend">🌱 Farming Setup</legend>
+          <div class="field-row field-row-3">
+            <div class="field-item static-label">
+              <label for="season">Season</label>
+              <select id="season" name="Season">
+                <option value="Kharif">Kharif</option>
+                <option value="Rabi" selected>Rabi</option>
+                <option value="Zaid">Zaid</option>
+              </select>
+            </div>
+            <div class="field-item static-label">
+              <label for="soilType">Soil Type</label>
+              <select id="soilType" name="Soil_Type">
+                <option value="Alluvial">Alluvial</option>
+                <option value="Black">Black</option>
+                <option value="Laterite">Laterite</option>
+                <option value="Loamy" selected>Loamy</option>
+                <option value="Red">Red</option>
+                <option value="Sandy">Sandy</option>
+              </select>
+            </div>
+            <div class="field-item static-label">
+              <label for="irrigation">Irrigation</label>
+              <select id="irrigation" name="Irrigation">
+                <option value="Canal">Canal</option>
+                <option value="Rainfed" selected>Rainfed</option>
+                <option value="Tube Well">Tube Well</option>
+              </select>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- ☁️ Climate -->
+        <fieldset class="field-group">
+          <legend class="group-legend">🌦️ Climate Inputs</legend>
+          <div class="field-row field-row-3">
+            <div class="field-item">
+              <div class="slider-field">
+                <div class="slider-top">
+                  <label>Rainfall <span class="tooltip-icon" data-tooltip="Annual rainfall in mm">ℹ️</span></label>
+                  <div class="slider-val-box">
+                    <input id="rainfallNum" name="Rainfall" type="number" min="0" max="3000" value="1200" />
+                    <span>mm</span>
+                  </div>
+                </div>
+                <input id="rainfall" type="range" min="0" max="3000" step="10" value="1200" />
+              </div>
+            </div>
+            <div class="field-item">
+              <div class="slider-field">
+                <div class="slider-top">
+                  <label>Temperature <span class="tooltip-icon" data-tooltip="Avg seasonal temp (°C)">ℹ️</span></label>
+                  <div class="slider-val-box">
+                    <input id="temperatureNum" name="Temperature" type="number" min="0" max="50" value="28" />
+                    <span>°C</span>
+                  </div>
+                </div>
+                <input id="temperature" type="range" min="0" max="50" step="0.5" value="28" />
+              </div>
+            </div>
+            <div class="field-item">
+              <div class="slider-field">
+                <div class="slider-top">
+                  <label>Humidity <span class="tooltip-icon" data-tooltip="Relative Humidity %">ℹ️</span></label>
+                  <div class="slider-val-box">
+                    <input id="humidityNum" name="Humidity" type="number" min="0" max="100" value="70" />
+                    <span>%</span>
+                  </div>
+                </div>
+                <input id="humidity" type="range" min="0" max="100" step="1" value="70" />
+              </div>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- 🧪 Soil & Nutrients -->
+        <fieldset class="field-group">
+          <legend class="group-legend">🧪 Soil &amp; Nutrients</legend>
+          <div class="field-row field-row-4">
+            <div class="field-item">
+              <div class="slider-field">
+                <div class="slider-top">
+                  <label>Nitrogen <span class="tooltip-icon" data-tooltip="Soil Nitrogen Content">ℹ️</span></label>
+                  <div class="slider-val-box">
+                    <input id="nitrogenNum" name="Nitrogen" type="number" min="0" max="500" value="300" />
+                    <span>kg/ha</span>
+                  </div>
+                </div>
+                <input id="nitrogenRange" type="range" min="0" max="500" step="1" value="300" />
+              </div>
+            </div>
+            <div class="field-item">
+              <div class="slider-field">
+                <div class="slider-top">
+                  <label>Phosphorus <span class="tooltip-icon" data-tooltip="Soil Phosphorus Content">ℹ️</span></label>
+                  <div class="slider-val-box">
+                    <input id="phosphorusNum" name="Phosphorus" type="number" min="0" max="400" value="200" />
+                    <span>kg/ha</span>
+                  </div>
+                </div>
+                <input id="phosphorusRange" type="range" min="0" max="400" step="1" value="200" />
+              </div>
+            </div>
+            <div class="field-item">
+              <div class="slider-field">
+                <div class="slider-top">
+                  <label>Potassium <span class="tooltip-icon" data-tooltip="Soil Potassium Content">ℹ️</span></label>
+                  <div class="slider-val-box">
+                    <input id="potassiumNum" name="Potassium" type="number" min="0" max="500" value="250" />
+                    <span>kg/ha</span>
+                  </div>
+                </div>
+                <input id="potassiumRange" type="range" min="0" max="500" step="1" value="250" />
+              </div>
+            </div>
+            <div class="field-item">
+              <div class="slider-field">
+                <div class="slider-top">
+                  <label>Soil pH <span class="tooltip-icon" data-tooltip="Acidic/Alkaline nature (3–9)">ℹ️</span></label>
+                  <div class="slider-val-box">
+                    <input id="soilPhNum" name="Soil_pH" type="number" min="3" max="9" step="0.1" value="6.5" />
+                  </div>
+                </div>
+                <input id="soilPh" type="range" min="3" max="9" step="0.1" value="6.5" />
+              </div>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- 🚜 Farm Data -->
+        <fieldset class="field-group">
+          <legend class="group-legend">🚜 Farm Data</legend>
+          <div class="field-row field-row-4">
+            <div class="field-item">
+              <input id="area" name="Area" type="number" min="1" value="10000" placeholder="e.g. 10000" />
+              <label for="area">Area</label>
+              <span class="input-unit">ha</span>
+            </div>
+            <div class="field-item">
+              <input id="fertilizer" name="Fertilizer" type="number" min="0" max="500" value="80" placeholder="0–500" />
+              <label for="fertilizer">Fertilizer</label>
+              <span class="input-unit">kg/ha</span>
+            </div>
+            <div class="field-item">
+              <input id="prevYield" name="Previous_Yield" type="number" min="0" step="0.1" value="1.5" placeholder="e.g. 1.5" />
+              <label for="prevYield">Prev Yield</label>
+              <span class="input-unit">t/ha</span>
+            </div>
+            <div class="field-item">
+              <input id="year" name="Year" type="number" min="2000" max="2050" value="2026" placeholder="2026" />
+              <label for="year">Year</label>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Submit -->
+        <div class="submit-row">
+          <button type="submit" class="btn predict-btn" id="predictBtn">
+            <span class="btn-text">🌿 Predict Best Crop</span>
+          </button>
+          <button type="button" class="btn reset-btn" id="resetBtn">↺ Reset</button>
+        </div>
+
+      </form>
+    </section>
+
+    <!-- ══ RESULT PANEL (right, sticky) ══ -->
+    <section class="glass-panel result-panel" id="resultContainer">
+      <div class="result-panel-inner">
+
+        <!-- Idle -->
+        <div id="resultIdle" class="result-idle">
+          <div class="idle-plant">🌱</div>
+          <h3>Ready to Predict</h3>
+          <p>Fill in your farm details and click <strong>Predict</strong> to get AI-powered crop recommendations.</p>
+        </div>
+
+        <!-- Loading -->
+        <div id="resultLoading" class="loading-state hidden">
+          <div class="loading-plant">🌾</div>
+          <div class="loading-spinner-ring"></div>
+          <div class="loading-text">Analyzing your data<span class="loading-dots"></span></div>
+          <div class="loading-sub">Soil • Climate • District patterns</div>
+        </div>
+
+        <!-- Error -->
+        <div id="resultError" class="result-error hidden">
+          <div class="error-icon">⚠️</div>
+          <h3>Prediction Failed</h3>
+          <p id="errorMsg">Unable to fetch prediction. Please try again.</p>
+        </div>
+
+        <!-- Success -->
+        <div id="resultSuccess" class="result-success hidden">
+
+          <!-- Hero -->
+          <div class="hero-card">
+            <div class="best-badge">✨ Best Recommendation</div>
+            <span class="hero-icon" id="heroIcon">🌾</span>
+            <h2 class="hero-title" id="bestCropTitle">—</h2>
+            <p class="hero-sub">Most profitable crop for your exact conditions</p>
+          </div>
+
+          <!-- Metrics -->
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="metric-icon-wrap">🌾</div>
+              <div class="metric-content">
+                <span class="metric-label">Expected Yield</span>
+                <span class="metric-value yield-text" id="yieldVal">--</span>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon-wrap">💰</div>
+              <div class="metric-content">
+                <span class="metric-label">Est. Profit</span>
+                <span class="metric-value profit-text" id="profitVal">--</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Top 3 -->
+          <div class="top-list">
+            <div class="list-header">
+              <span>🥇</span>
+              <div class="list-title">Top Alternative Crops</div>
+            </div>
+            <ul class="top-items" id="topList"></ul>
+          </div>
+
+          <!-- Insights -->
+          <div class="insights-panel">
+            <div class="list-header">
+              <span>🧠</span>
+              <div class="list-title">Smart Insights</div>
+            </div>
+            <div class="insights-content" id="insightList"></div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ── FOOTER ── -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-text">Smart Crop Recommendation System — Odisha Agricultural AI</div>
+      <div class="footer-badge">⚡ Powered by AI Crop Intelligence · StackingClassifier + CatBoost</div>
+    </div>
+  </footer>
+
+  <script src="script.js?v=5"></script>
+</body>
+</html>
