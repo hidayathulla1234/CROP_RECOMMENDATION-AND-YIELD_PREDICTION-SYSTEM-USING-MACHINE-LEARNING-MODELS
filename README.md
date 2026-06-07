@@ -1,6 +1,4 @@
-# 🌾 Explainable Ensemble Learning Framework for Crop
-Recommendation, Yield Forecasting, and Profitability
-Assessment Using Multi-Source Agricultural Data
+# 🌾 Explainable Ensemble Learning Framework for Crop Recommendation, Yield Forecasting, and Profitability Assessment Using Multi-Source Agricultural Data
 
 <p align="center">
   <img src="assets/system_overview.png" width="100%">
